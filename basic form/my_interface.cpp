@@ -4,22 +4,22 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <stdlib.h>
+
 
 
 MY_INTERFACE :: MY_INTERFACE()
 {
-  cout<<"hi~"<<endl;
-  start_point = clock();
-  fname_limit = 0;;
+  fname_limit = 0;
 
 }
 MY_INTERFACE :: ~MY_INTERFACE()
 {
-  cout<<"bey~"<<endl;
 }
 
 void MY_INTERFACE :: print_menu()
 {
+  cout<<endl;
   cout<<"1. training"<<endl;
   cout<<"2. mapping"<<endl;
   cout<<"3. setting"<<endl;
@@ -27,6 +27,7 @@ void MY_INTERFACE :: print_menu()
 }
 void MY_INTERFACE :: print_training()
 {
+  system(SCREEN_CLEAR);
   cout<<"1. random weight"<<endl;
   cout<<"2. sellect a weight"<<endl;
 }
@@ -64,9 +65,9 @@ char* MY_INTERFACE :: sellect_file(int num)
 }
 char* MY_INTERFACE :: sellect_dir(int num)
 {
-  strcpy( weight_name,"output_data\\");
+  strcpy( weight_name,"output_data/");
   strcat( weight_name,fname[num]);
-  strcat( weight_name,"\\weight_after.txt");
+  strcat( weight_name,"/weight_after.txt");
 
   return weight_name;
 }
@@ -96,24 +97,16 @@ char* MY_INTERFACE :: get_recent_dir()
     }
   }
   mkdir(temp,0755);
-  strcat( recent_dir, "\\");
+  strcat( recent_dir, "/");
   return recent_dir;
 
 }
 void MY_INTERFACE :: print_file()
 {
+  system(SCREEN_CLEAR);
   for(int i = 0 ; i < fname_limit ; i++)
   {
     printf("%2d. %s\n",i,fname[i]);
   }
 }
-void MY_INTERFACE :: timer(int now, int total)
-{
-  end_point = clock();
-  if(now % PRINT_PER_EPOCH == 0)
-  {
-    cout<<"진행도 : "<<(double)now/(double)total*100<<"%, ";
-    cout<<"남은 시간 : "<<(total-now)*(double)(end_point - start_point)/CLOCKS_PER_SEC<<endl;
-  }
-  start_point = end_point;
-}
+
