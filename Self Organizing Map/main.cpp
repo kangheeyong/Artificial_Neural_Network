@@ -2,6 +2,7 @@
 #include "sub_main.hpp"
 #include <stdio.h>
 
+
 int input_num()
 {
   cout<<endl<<"choose the number"<<endl;

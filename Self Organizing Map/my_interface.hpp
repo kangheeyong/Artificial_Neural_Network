@@ -6,7 +6,10 @@
 
 #define PRINT_PER_EPOCH   5000
 #define INPUT_DATA_PATH   "input_data/"
+#define OUTPUT_PATH   "output_data/"
 #define OUTPUT_DATA_PATH   "output_data/"
+#define SCREEN_CLEAR        "clear"
+
 
 using namespace std;
 
@@ -21,7 +24,6 @@ private :
   char weight_name[100];
 
 
-  clock_t start_point, end_point;
 
 public :
 
@@ -39,7 +41,6 @@ public :
   void print_setting();
   void print_file();
 
-  void timer(int now, int total); //data의 row단위로 섞는다.
   MY_INTERFACE();
   ~MY_INTERFACE();
 };

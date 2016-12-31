@@ -236,6 +236,7 @@ bool MY_DATA ::print()
   if(this->data == NULL) return -1;
   else
   {
+    cout<<endl;
     if(this->column < 21)
     {
       for(int i = 0 ; i < this->column ; i++)
@@ -267,6 +268,7 @@ bool MY_DATA ::print()
         cout<<endl;
       }
     }
+    cout<<endl;
   }
 }
 
