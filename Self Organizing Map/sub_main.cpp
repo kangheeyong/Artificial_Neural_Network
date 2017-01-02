@@ -10,6 +10,10 @@ static int cluster = 4;
 static int  total = 50000;
 static double gain = 0.2;
 static double distance_gain = 0.02;
+static double weight_range_min = 0.35;
+static double weight_range_max = 0.45;
+
+
 void traing_random_weight(char* input_name,char* output_name)
 {
   printf("traing_random_weight in : %s\n",input_name);
@@ -23,7 +27,7 @@ void traing_random_weight(char* input_name,char* output_name)
 
   MY_DATA weight,setting;
   weight.init(cluster,origin.get_row());
-  weight.random( 0.35, 0.45);
+  weight.random(weight_range_min, weight_range_max);
   weight.print();
   setting.init(4,1);
 
@@ -32,8 +36,7 @@ void traing_random_weight(char* input_name,char* output_name)
   strcat(buff,"weight_before.txt");
   weight.fwrite(buff);
 
-  int epoch = -1;
-  int iteration = 0;
+  int epoch = 0;
   int winner_num;
   double temp;
   double min;
@@ -48,10 +51,8 @@ void traing_random_weight(char* input_name,char* output_name)
 
     if(epoch % 100 == 0)  origin.suffle();
 
-    epoch++;
     for(int k = 0 ; k < origin.get_column() ; k++)
     {
-      iteration++;
       for(int i = 0 ; i < cluster ; i++)
       {
         temp = 0.0;
@@ -73,35 +74,37 @@ void traing_random_weight(char* input_name,char* output_name)
           }
         }
       }
-
       double distance_temp = distance_gain*(1.0 - (double)epoch/total);
 
 
       distance_temp = distance_temp*distance_temp;
 
-      //
       for(int i = 0 ; i < cluster ; i++)
       {
-        temp = 0.0;
-        for(int j = 0 ; j < origin.get_row() ; j++)
+       
+        if(i != winner_num)
         {
-          temp = temp + (weight(winner_num,j) - weight(i,j))*(weight(winner_num,j) - weight(i,j));
-        }
-
-        if(distance_temp >= temp )
-        {
-
+          temp = 0.0;
           for(int j = 0 ; j < origin.get_row() ; j++)
           {
-            weight(i,j) = weight(i,j) + gain*(1 - (double)epoch/total)*(origin(k,j) - weight(i,j));
+            temp = temp + (weight(winner_num,j) - weight(i,j))*(weight(winner_num,j) - weight(i,j));
+          }
+
+          if(distance_temp >= temp )
+          {
+            for(int j = 0 ; j < origin.get_row() ; j++)
+            {
+              weight(i,j) = weight(i,j) + gain*(1 - (double)epoch/total)*(origin(k,j) - weight(i,j));
+            }   
           }
         }
-
       }
-      //
-
-
+      for(int j = 0 ; j < origin.get_row() ; j++)
+      {
+        weight(winner_num,j) = weight(winner_num,j) + gain*(1 - (double)epoch/total)*(origin(k,j) - weight(winner_num,j));
+      } 
     }
+    epoch++;
   }
 
   weight.print();
@@ -137,7 +140,8 @@ void setting()
   cout<<"max epoch : "<<total<<endl;
   cout<<"gain : "<<gain<<endl;
   cout<<"distance_gain : "<<distance_gain<<endl;
-
+  cout<<"weight_range_min : "<<weight_range_min<<endl;
+  cout<<"weight_range_max : "<<weight_range_max<<endl;
   int sel = 1;
   cout<<"change?? yes(1) or no(2) : ";
   cin>>sel;
@@ -151,5 +155,9 @@ void setting()
     cin>>gain;
     cout<<"distance gain : ";
     cin>>distance_gain;
+    cout<<"weight_range_min : ";
+    cin>>weight_range_min;
+    cout<<"weight_range_max : ";
+    cin>>weight_range_max;
   }
 }
