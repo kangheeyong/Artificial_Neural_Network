@@ -25,7 +25,7 @@ void MY_CNN :: init(int cluster)
   this->cluster = cluster;
 }
 
-void MY_CNN :: read_input(char *file_name)
+void MY_CNN :: read_input(const char *file_name)
 {
     read_status = 1;
     origin.fread(file_name);
@@ -33,11 +33,11 @@ void MY_CNN :: read_input(char *file_name)
 
 
 }
-void MY_CNN :: read_weight(char *file_name)
+void MY_CNN :: read_weight(const char *file_name)
 { 
     weight.fread(file_name); 
 }
-void MY_CNN :: write_weight(char *file_name)
+void MY_CNN :: write_weight(const char *file_name)
 {
     if(learning_status == 0)
     {
@@ -48,7 +48,7 @@ void MY_CNN :: write_weight(char *file_name)
  
 
 }
-void MY_CNN :: write_setting(char *file_name)
+void MY_CNN :: write_setting(const char *file_name)
 {
     setting.init(3,1);
     setting(0,0) = cluster;
@@ -56,7 +56,7 @@ void MY_CNN :: write_setting(char *file_name)
     setting(2,0) = MSE;
     setting.fwrite(file_name);
 }
-void MY_CNN :: write_result(char *file_name)
+void MY_CNN :: write_result(const char *file_name)
 {
     MY_DATA result;
     
@@ -198,7 +198,16 @@ void MY_CNN :: learning()
             }
             epoch++; 
         }while(loser != 0);
-       
+
+        //-----------------------------------------------------------
+        system("clear"); 
+        cout<<"----------------------"<<endl;
+        cout<<"percent : "<<(double)centroid_k/cluster*100<<"%"<<endl;
+        cout<<"k : "<<centroid_k<<endl;
+        cout<<"epoch : "<<epoch<<endl;
+        cout<<"----------------------"<<endl;
+        //-----------------------------------------------------------
+
         for(int i = 0; i < centroid_k ;i++) cluster_data(i,1) = 0.0; 
         for(int i = 0 ; i < data_set ; i++)
         {

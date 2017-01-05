@@ -33,8 +33,8 @@ public:
   void timer(int now, int total); //data의 row단위로 섞는다.
   const int get_row();
   const int get_column();
-  bool fread(char *fname); //텍스트 읽기
-  bool fwrite(char *fname); //텍스트 쓰기
+  bool fread(const char *fname); //텍스트 읽기
+  bool fwrite(const char *fname); //텍스트 쓰기
   const double& operator()(int y, int x) const; //배열처럼 쓸수 있게 출력
   double& operator()(int y, int x); //배열처럼 쓸 수 있게 대입
   MY_DATA& operator=(const MY_DATA &other); //대입연산자

@@ -21,11 +21,11 @@ public :
 
 void init(int cluster);
 void status();
-void read_input(char *file_name);
-void read_weight(char *file_name);
-void write_weight(char *file_name);
-void write_setting(char *file_name);
-void write_result(char *file_name);
+void read_input(const char *file_name);
+void read_weight(const char *file_name);
+void write_weight(const char *file_name);
+void write_setting(const char *file_name);
+void write_result(const char *file_name);
 void learning();
 void testing();
 
