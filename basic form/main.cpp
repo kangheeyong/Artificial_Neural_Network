@@ -1,7 +1,7 @@
 #include "my_interface.hpp"
 #include "sub_main.hpp"
 #include <stdio.h>
-
+#include <stdlib.h>
 
 int input_num()
 {
@@ -21,6 +21,7 @@ int main()
 
   while(sel < 4)
   {
+    system("clear");
     my_ui.print_menu();
     sel = input_num();
 
