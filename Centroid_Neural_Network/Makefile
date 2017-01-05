@@ -1,7 +1,7 @@
 
 FLAGS = -o
 TARGET = test
-OBJECTS = main.o my_data.o
+OBJECTS = main.o my_data.o my_Centroid_Neural_Network.o
 
 $(TARGET) : $(OBJECTS)
 				$(CXX) $(FLAGS) $(TARGET) $(OBJECTS)
