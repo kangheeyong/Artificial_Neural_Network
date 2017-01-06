@@ -109,7 +109,7 @@ const int MY_DATA ::get_column()
   return this->column;
 }
 
-bool MY_DATA ::fread(char *fname)
+bool MY_DATA ::fread(const char *fname)
 {
    FILE *fp;
    if(fp = fopen( fname, "r"))
@@ -162,7 +162,7 @@ bool MY_DATA ::fread(char *fname)
    }
 }
 
-bool MY_DATA ::fwrite(char *fname)
+bool MY_DATA ::fwrite(const char *fname)
 {
   FILE *fp;
   if(fp = fopen( fname, "w"))
