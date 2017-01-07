@@ -26,7 +26,10 @@ void MY_SOM :: status()
     
 }
 
-
+double MY_SOM :: get_percent()
+{
+  return (double)epoch/(double)total;    
+}
 void MY_SOM :: init(int cluster,int total,double gain, double distance_gain, double weight_range_min, double weight_range_max)
 {
   this->cluster = cluster;
@@ -35,6 +38,7 @@ void MY_SOM :: init(int cluster,int total,double gain, double distance_gain, dou
   this->distance_gain = distance_gain;
   this->weight_range_min = weight_range_min;
   this->weight_range_max = weight_range_max;
+  this->epoch = 0;
 }
 
 void MY_SOM :: read_input(const char *file_name)
@@ -123,7 +127,7 @@ void MY_SOM :: learning()
     weight_before = weight;
 
 
-    int epoch = 0;
+    epoch = 0;
     int winner_num;
     double temp;
     double min;
@@ -134,7 +138,6 @@ void MY_SOM :: learning()
     while(epoch < total)
     {
         origin.timer(epoch, total);
-
         if(epoch % 100 == 0)  origin.suffle();
 
         for(int k = 0 ; k < origin.get_column() ; k++)
@@ -308,7 +311,7 @@ MY_SOM :: MY_SOM()
   this->distance_gain = 0.02;
   this->weight_range_min = 0.35;
   this->weight_range_max = 0.45;
-
+  this->epoch = 0;
 
 
 

@@ -17,7 +17,7 @@ double gain;
 double distance_gain;
 double weight_range_min;
 double weight_range_max;
-
+int epoch;
 
 
 
@@ -32,7 +32,7 @@ void write_setting(const char *file_name);
 void write_result(const char *file_name);
 void learning();
 void testing();
-
+double get_percent();
 
 MY_SOM();
 ~MY_SOM();
