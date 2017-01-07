@@ -79,6 +79,12 @@ void MY_CNN :: write_result(const char *file_name)
   //  result.print();
     result.fwrite(file_name);
 }
+
+double MY_CNN :: get_percent()
+{
+  return (double)centroid_k/(double)cluster;
+}
+
 void MY_CNN :: learning()
 {
     if(read_status == 0)
@@ -124,7 +130,7 @@ void MY_CNN :: learning()
     cluster_data.init(cluster,2); //클러스터에 포함된 데이터 수, 에러^2의 합들
 
 
-    int centroid_k = 2;
+    centroid_k = 2;
 
     for(int i = 0 ; i < data_dimension ; i++)
     {
@@ -202,7 +208,7 @@ void MY_CNN :: learning()
         //-----------------------------------------------------------
         system("clear"); 
         cout<<"----------------------"<<endl;
-        cout<<"percent : "<<(double)centroid_k/cluster*100<<"%"<<endl;
+        cout<<"percent : "<<this->get_percent()*100<<"%"<<endl;
         cout<<"k : "<<centroid_k<<endl;
         cout<<"epoch : "<<epoch<<endl;
         cout<<"----------------------"<<endl;
@@ -341,6 +347,8 @@ MY_CNN :: MY_CNN()
   this->epoch = 0;
   this->MSE = 0.0;
   this->cluster = 4;
+  this->centroid_k = 2;
+
 }
 MY_CNN ::~ MY_CNN()
 {

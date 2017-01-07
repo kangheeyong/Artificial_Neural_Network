@@ -14,7 +14,7 @@ int epoch;
 double MSE;
 MY_DATA weight, origin, setting;
 MY_DATA origin_maching;
-
+int centroid_k;
 
 
 public :
@@ -28,7 +28,7 @@ void write_setting(const char *file_name);
 void write_result(const char *file_name);
 void learning();
 void testing();
-
+double get_percent();
 
 MY_CNN();
 ~MY_CNN();
