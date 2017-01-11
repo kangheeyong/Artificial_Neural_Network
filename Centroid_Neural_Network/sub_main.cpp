@@ -24,7 +24,9 @@ void traing_random_weight(char* input_name,char* output_name)
 
     a.init(cluster);
     a.read_input(input_name);
-    a.learning();
+    a.WCNN_learning();
+    
+    
     a.write_weight(weight_path.c_str());
     a.write_setting(setting_path.c_str());
     a.status();
@@ -57,7 +59,6 @@ void mapping(char* input_name,char* output_name,char* weight_name)
     a.read_input(input_name);
     a.read_weight(weight_name);
     a.testing();
-    a.write_result(result_path.c_str());
 
     printf("press any key\n");
     scanf("%s",key_buff);

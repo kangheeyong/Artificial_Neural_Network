@@ -112,6 +112,9 @@ const int MY_DATA ::get_column()
 bool MY_DATA ::fread(const char *fname)
 {
    FILE *fp;
+
+  this->init();
+
    if(fp = fopen( fname, "r"))
    {
      char buf[BUFF_SIZE];

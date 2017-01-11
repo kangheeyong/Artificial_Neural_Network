@@ -15,6 +15,8 @@ double MSE;
 MY_DATA weight, origin, setting;
 MY_DATA origin_maching;
 int centroid_k;
+MY_DATA variance,wcnn_weight;
+MY_DATA mean;
 
 
 public :
@@ -27,6 +29,7 @@ void write_weight(const char *file_name);
 void write_setting(const char *file_name);
 void write_result(const char *file_name);
 void learning();
+void WCNN_learning();
 void testing();
 double get_percent();
 
