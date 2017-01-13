@@ -25,6 +25,7 @@ private:
 public:
 
   void init(); //초기화
+  void init(int y);
   void init(int y, int x);
   bool print();
   void random(); //data 값의 랜덤
@@ -35,6 +36,8 @@ public:
   const int get_column();
   bool fread(const char *fname); //텍스트 읽기
   bool fwrite(const char *fname); //텍스트 쓰기
+  const double& operator()(int y) const; //배열처럼 쓸수 있게 출력
+  double& operator()(int y); //배열처럼 쓸 수 있게 대입
   const double& operator()(int y, int x) const; //배열처럼 쓸수 있게 출력
   double& operator()(int y, int x); //배열처럼 쓸 수 있게 대입
   MY_DATA& operator=(const MY_DATA &other); //대입연산자
