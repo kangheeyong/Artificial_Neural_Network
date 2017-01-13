@@ -73,7 +73,7 @@ void MY_CNN :: read_input(const char *file_name)
         {
             //이부분을 수정하여 wcnn의 weight를 바꾼다
             if(wcnn_weight(i,j) < variance(0,j))  wcnn_weight(i,j) = 0.682;
-            else if(wcnn_weight(i,j) < 2*variance(0,j))  wcnn_weight(i,j) = 0.272;
+            else if(wcnn_weight(i,j) < 4*variance(0,j))  wcnn_weight(i,j) = 0.272;
             else wcnn_weight(i,j) = 0.044;
         }
     }

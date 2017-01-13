@@ -39,6 +39,16 @@ void MY_DATA ::init(int y, int x)
   this->column = y;
   for(int i = 0 ; i < x*y ; i++) this->data[i] = 0.0;
 }
+void MY_DATA ::init(int y)
+{
+  this->init();
+  this->data = new double[y];
+  this->row = 1;
+  this->column = y;
+  for(int i = 0 ; i < y ; i++) this->data[i] = 0.0;
+}
+
+
 void MY_DATA ::random()
 {
 
@@ -186,6 +196,15 @@ bool MY_DATA ::fwrite(const char *fname)
     cout<<"fail to write"<<endl;
     return -1;
   }
+}
+const double&  MY_DATA ::operator()(int y) const
+{
+  return this->data[y];
+}
+
+double&  MY_DATA ::operator()(int y)
+{
+  return this->data[y];
 }
 
 const double&  MY_DATA ::operator()(int y, int x) const

@@ -24,7 +24,13 @@ void traing_random_weight(char* input_name,char* output_name)
 
     a.init(cluster);
     a.read_input(input_name);
-    a.WCNN_learning();
+
+    printf("1. CNN\n2.WCNN\n");
+    int num;
+    cin>>num;
+
+    if(num  == 1) a.learning();
+    else a.WCNN_learning();
     
     
     a.write_weight(weight_path.c_str());
