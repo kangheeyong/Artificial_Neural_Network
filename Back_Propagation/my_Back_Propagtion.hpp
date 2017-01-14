@@ -33,6 +33,7 @@ public :
   void read_input(const char *file_name);
   void read_weight(const char *file_name);
   void rand_weight();
+  void mkdir_learning_result(const char* file_name);
   void read_setting(const char *file_name);
   void write_weight(const char *file_name);
   void write_setting(const char *file_name);

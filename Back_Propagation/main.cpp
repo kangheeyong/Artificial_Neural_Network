@@ -1,6 +1,6 @@
 #include "my_Back_Propagtion.hpp"
 #include <iostream>
-
+#include <stdio.h>
 
 
 using namespace std;
@@ -9,13 +9,22 @@ int main(int argc, char **argv)
 {
   MY_BP a;
 
-  a.read_setting("setting.txt");
-  a.rand_weight();
-//  a.status();
-//  cout<<"-----------------"<<endl;
-  a.read_input("train_test.txt");
-  a.learning();
+  if(argc != 4)
+  {
+    printf("Usage : %s [weight dir] [input text] [result text]\n",argv[0]);
+    return 0;
+  }
+
+  a.read_weight(argv[1]);
+  //a.rand_weight();
+  //   a.read_weight("weight");
+  //  a.status();
+  //  cout<<"-----------------"<<endl;
+  a.read_input(argv[2]);
+  a.testing();
   a.status();
-  a.write_error("error.txt");
-   return 0;
+  printf("success\n");
+  a.write_result(argv[3]);
+  // a.write_weight("weight");
+  return 0;
 }
