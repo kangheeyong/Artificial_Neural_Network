@@ -90,6 +90,28 @@ void MY_DATA ::suffle()
   delete temp;
 
 }
+
+void MY_DATA ::suffle(int n)
+{
+  srand(n);
+
+  double *temp = new double[this->row];
+  int num;
+  for(int i = 0 ; i < this->column ; i++)
+  {
+    num = rand()%this->column;
+    for(int j = 0 ; j < this->row ; j++)
+    {
+      temp[j] = this->data[i * this->row + j];
+      this->data[i * this->row + j] = this->data[num * this->row + j];
+      this->data[num * this->row + j] = temp[j];
+    }
+  }
+  srand(time(NULL));
+
+  delete temp;
+
+}
 void MY_DATA ::timer(int now, int total)
 {
   end_point = clock();
