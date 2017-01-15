@@ -31,6 +31,7 @@ public:
   void random(); //data 값의 랜덤
   void random(double min, double max);
   void suffle(); //data의 row단위로 섞는다.
+  void suffle(int num); //data의 row단위로 섞는다.
   void timer(int now, int total); //data의 row단위로 섞는다.
   const int get_row();
   const int get_column();

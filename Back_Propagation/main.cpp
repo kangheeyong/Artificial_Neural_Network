@@ -11,20 +11,22 @@ int main(int argc, char **argv)
 
   if(argc != 4)
   {
-    printf("Usage : %s [weight dir] [input text] [result text]\n",argv[0]);
+    printf("Usage : %s [setting text] [input text] [weight dir]\n",argv[0]);
     return 0;
   }
 
-  a.read_weight(argv[1]);
-  //a.rand_weight();
+
+  a.read_setting(argv[1]);
+  //a.read_weight(argv[1]);
+  a.rand_weight();
   //   a.read_weight("weight");
   //  a.status();
   //  cout<<"-----------------"<<endl;
   a.read_input(argv[2]);
-  a.testing();
+  a.learning();
   a.status();
   printf("success\n");
-  a.write_result(argv[3]);
+  a.mkdir_learning_result(argv[3]);
   // a.write_weight("weight");
   return 0;
 }

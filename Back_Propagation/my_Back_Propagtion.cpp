@@ -289,6 +289,13 @@ void MY_BP :: learning()
   while(epoch < max_epoch)
   {
     origin.timer(epoch, max_epoch);
+
+    if(epoch % 500 == 0)
+    { 
+      input.suffle(1);
+      target.suffle(1);
+    }
+
     error = 0.0;
     for(int k = 0 ; k < total_set ; k++)
     {
