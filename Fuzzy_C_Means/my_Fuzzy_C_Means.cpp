@@ -25,8 +25,11 @@ void MY_FCM :: status()
 
   printf("----- center -----");
   center.print();
-  printf("----- weight -----\n");
+  printf("----- weight -----");
   weight.print();
+  printf("----- errors -----");
+  errors.print();
+
 }
 
 void MY_FCM :: read_input(const char *file_name)
@@ -50,23 +53,27 @@ void MY_FCM ::  write_weight(const char *file_name)
 
 void MY_FCM ::  write_error(const char *file_name)
 {
-
+  errors.fwrite(file_name);
 }
 
 void MY_FCM ::  learning()
 {
- 
+
   input_dimension = origin.get_row();
   input_set = origin.get_column();
- 
+
 
   weight.init(input_set,cluster);
   weight.random(0,1);
 
   center.init(cluster,input_dimension);
 
+  MY_DATA e;
+
+  e.init(MAX_STEP);
+
   step = 0;
-  
+
   MY_DATA weight_before;
 
   while(1)
@@ -109,35 +116,36 @@ void MY_FCM ::  learning()
             d1 = d1 + (origin(j,b) - center(i,b))*(origin(j,b) - center(i,b));
             d2 = d2 + (origin(j,b) - center(a,b))*(origin(j,b) - center(a,b));
           }
-          weight(j,i) = weight(j,i) + pow(sqrt(d1)/sqrt(d2),2/(m-1));
+          weight(j,i) = weight(j,i) + pow(sqrt(d1)/sqrt(d2),2.0/(m-1.0));
         }
         weight(j,i) = 1/weight(j,i);
       }
     }
 
 
-  if(step > 1)
-  {
-    double temp1 = 0;
-    for(int i = 0 ; i< cluster ; i++)
+    if(step > 1)
     {
-      for(int j = 0 ; j <input_set ; j++)
+      double temp1 = 0;
+      for(int i = 0 ; i< cluster ; i++)
       {
-        temp1 = temp1 + (weight_before(j,i) - weight(j,i))*(weight_before(j,i) - weight(j,i));
+        for(int j = 0 ; j <input_set ; j++)
+        {
+          temp1 = temp1 + (weight_before(j,i) - weight(j,i))*(weight_before(j,i) - weight(j,i));
+        }
       }
+
+      e(step-1) = sqrt(temp1);
+      if(e(step - 1) < min_error) break;
     }
-    temp1 = sqrt(temp1);
-    if(temp1 < min_error)
-    {
-
-      printf("error : %lf\n",temp1);
-      break;
-    }
+    weight_before = weight;
+    if(step > MAX_STEP) break;
   }
-  weight_before = weight;
+  errors.init(step);
 
+  for(int i = 0 ; i < step ; i++)
+  {
+    errors(i) = e(i);
   }
-
 
 }
 

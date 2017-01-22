@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 using namespace std;
 
 int main(int argc, char **argv)
@@ -14,6 +15,8 @@ int main(int argc, char **argv)
     printf("Usage : %s [setting txt] [input text] [weight text]\n",argv[0]);
     return 0;
   }
+
+
   a.read_setting(argv[1]);
   a.read_input(argv[2]);
   a.learning();
