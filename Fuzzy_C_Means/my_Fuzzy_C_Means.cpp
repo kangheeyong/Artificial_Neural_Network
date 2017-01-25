@@ -1,6 +1,8 @@
 #include "my_Fuzzy_C_Means.hpp" 
 #include <stdio.h>
 #include <math.h>
+#include <stdlib.h>
+
 
 MY_FCM :: MY_FCM()
 {
@@ -21,9 +23,9 @@ void MY_FCM :: status()
   printf("cluster : %d\n",cluster);
   printf("min_error : %lf\n",min_error);
   printf("m : %d\n",m);
-  printf("gain : %lf\n",gain);
+  if(setting.get_row() == 4 )printf("gain : %lf\n",gain);
   printf("step : %d\n",step);
-  printf("final errer : %lf\n",errors(step-1));
+  if(step > 1 )printf("final errer : %lf\n",errors(step-1));
   printf("----- center -----");
   center.print();
   printf("----- weight -----");
@@ -42,10 +44,12 @@ void MY_FCM :: read_setting(const char *file_name)
 {
   setting.fread(file_name);
 
+ 
   cluster = setting(0);
   min_error =setting(1);
   m = setting(2);
-  gain = setting(3);
+
+  if(setting.get_row() == 4) gain = setting(3);
 }
 
 void MY_FCM ::  write_weight(const char *file_name)
@@ -150,6 +154,12 @@ void MY_FCM ::  learning()
 }
 void MY_FCM :: GBFCM_learning()
 {
+  if(setting.get_row() != 4)
+  {
+    printf("setting is incorrect\n");
+    exit(1);
+  }
+
   input_dimension = origin.get_row();
   input_set = origin.get_column();
 
@@ -170,16 +180,21 @@ void MY_FCM :: GBFCM_learning()
 
   step = 0;
   double temp2 = 0;
-  double temp2_before;
+
+  origin.suffle();// recomend!
+
   while(1)
   {
+
     step++;
     temp2 = 0;
-       
+
+
 
     for(int i = 0 ; i < input_set ; i++)
     {
 
+   
       for(int j = 0 ; j < cluster ; j++)
       {
         weight(i,j) = 0.0;
@@ -219,32 +234,24 @@ void MY_FCM :: GBFCM_learning()
       center_before[i] = center;
     }
 
-
-    // if(step > 2 )
-    // {
-    //   if( (temp2 - temp2_before < 0.001) && (temp2 - temp2_before > -0.001)) gain = gain_temp/16;
-    //   else gain = gain_temp;
-    //  }
-
     if(step > 1)
     {
-      //      temp2_before = temp2;
       e(step-1) = temp2/input_set;
       if(e(step - 1) < min_error) break;
     }
 
     if(step > MAX_STEP) break;
-    //    break; 
   }
   errors.init(step);
 
   for(int i = 0 ; i < step ; i++)
   {
     errors(i) = e(i);
-  
+
   }
 
   delete [] center_before;
+
 }
 
 

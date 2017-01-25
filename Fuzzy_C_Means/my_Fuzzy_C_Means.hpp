@@ -1,7 +1,7 @@
 #ifndef __MY_FUZZY_C_MEANS_CPP__
 #define __MY_FUZZY_C_MEANS_CPP__
 
-#define MAX_STEP    50000
+#define MAX_STEP    500
 
 #include "my_data.hpp"
 
