@@ -11,6 +11,7 @@ private :
   int step;
   int cluster;
   double min_error;
+  double gain;
   int input_dimension, input_set;
   int m;
 
@@ -24,6 +25,7 @@ public :
   void write_weight(const char *file_name);
   void write_error(const char *file_name);
   void learning();
+  void GBFCM_learning();
 
 };
 
