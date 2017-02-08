@@ -22,5 +22,7 @@ int main(int argc, char **argv)
   a.learning();
   a.status();
   a.write_weight(argv[3]);
+  a.write_result("result.txt");
+  a.write_error("error.txt");
   return 0;
 }
