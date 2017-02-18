@@ -30,6 +30,7 @@ void write_setting(const char *file_name);
 void write_result(const char *file_name);
 void learning();
 void WCNN_learning();
+void pibonachi_learning();
 void testing();
 double get_percent();
 

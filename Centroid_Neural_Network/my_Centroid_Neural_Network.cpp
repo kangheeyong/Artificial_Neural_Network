@@ -14,9 +14,9 @@ void MY_CNN :: status()
   cout<<"MSE : "<<MSE<<endl;
   cout<<"weight after"<<endl;
   weight.print();
-  
+
   cout<<"----------------------"<<endl;
-    
+
 }
 
 
@@ -27,105 +27,105 @@ void MY_CNN :: init(int cluster)
 
 void MY_CNN :: read_input(const char *file_name)
 {
-    read_status = 1;
-    origin.fread(file_name);
-    origin_maching.init(origin.get_column(),1);
-    int data_dimension = origin.get_row();
-    int data_set = origin.get_column();
-   
+  read_status = 1;
+  origin.fread(file_name);
+  origin_maching.init(origin.get_column(),1);
+  int data_dimension = origin.get_row();
+  int data_set = origin.get_column();
 
-    
-    mean.init(1,data_dimension);
-    variance.init(1,data_dimension);
-    wcnn_weight.init(data_set,data_dimension);
-    
-    for(int i = 0 ; i < data_set ; i++)
-    {
-        for(int j = 0 ; j < data_dimension ; j++)
-        {
-            mean(0,j) = mean(0,j) + origin(i,j);
-        }
-    }
+
+
+  mean.init(1,data_dimension);
+  variance.init(1,data_dimension);
+  wcnn_weight.init(data_set,data_dimension);
+
+  for(int i = 0 ; i < data_set ; i++)
+  {
     for(int j = 0 ; j < data_dimension ; j++)
     {
-        mean(0,j) = mean(0,j)/data_set;
+      mean(0,j) = mean(0,j) + origin(i,j);
     }
+  }
+  for(int j = 0 ; j < data_dimension ; j++)
+  {
+    mean(0,j) = mean(0,j)/data_set;
+  }
 
-    for(int i = 0 ; i < data_set ; i++)
-    {
-        for(int j = 0 ; j < data_dimension ; j++)
-        {
-            variance(0,j) = variance(0,j) + (mean(0,j) - origin(i,j))*(mean(0,j) - origin(i,j));
-            wcnn_weight(i,j) = wcnn_weight(i,j) +  (mean(0,j) - origin(i,j))*(mean(0,j) - origin(i,j));
-
-        }
-    }
-
+  for(int i = 0 ; i < data_set ; i++)
+  {
     for(int j = 0 ; j < data_dimension ; j++)
     {
-        variance(0,j) = variance(0,j)/data_set;
+      variance(0,j) = variance(0,j) + (mean(0,j) - origin(i,j))*(mean(0,j) - origin(i,j));
+      wcnn_weight(i,j) = wcnn_weight(i,j) +  (mean(0,j) - origin(i,j))*(mean(0,j) - origin(i,j));
+
     }
+  }
+
+  for(int j = 0 ; j < data_dimension ; j++)
+  {
+    variance(0,j) = variance(0,j)/data_set;
+  }
 
 
-    for(int i = 0 ; i < data_set ; i++)
+  for(int i = 0 ; i < data_set ; i++)
+  {
+    for(int j = 0 ; j < data_dimension ; j++)
     {
-        for(int j = 0 ; j < data_dimension ; j++)
-        {
-            //이부분을 수정하여 wcnn의 weight를 바꾼다
-            if(wcnn_weight(i,j) < variance(0,j))  wcnn_weight(i,j) = 0.682;
-            else if(wcnn_weight(i,j) < 4*variance(0,j))  wcnn_weight(i,j) = 0.272;
-            else wcnn_weight(i,j) = 0.044;
-        }
+      //이부분을 수정하여 wcnn의 weight를 바꾼다
+      if(wcnn_weight(i,j) < variance(0,j))  wcnn_weight(i,j) = 0.682;
+      else if(wcnn_weight(i,j) < 4*variance(0,j))  wcnn_weight(i,j) = 0.272;
+      else wcnn_weight(i,j) = 0.044;
     }
+  }
 
 
 
 }
 void MY_CNN :: read_weight(const char *file_name)
 { 
-    weight.fread(file_name); 
+  weight.fread(file_name); 
 }
 void MY_CNN :: write_weight(const char *file_name)
 {
-    if(learning_status == 0)
-    {
-        cout<<"you need learning"<<endl;
-        exit(1);
-    }
-   weight.fwrite(file_name);
- 
+  if(learning_status == 0)
+  {
+    cout<<"you need learning"<<endl;
+    exit(1);
+  }
+  weight.fwrite(file_name);
+
 
 }
 void MY_CNN :: write_setting(const char *file_name)
 {
-    setting.init(3,1);
-    setting(0,0) = cluster;
-    setting(1,0) = epoch;
-    setting(2,0) = MSE;
-    setting.fwrite(file_name);
+  setting.init(3,1);
+  setting(0,0) = cluster;
+  setting(1,0) = epoch;
+  setting(2,0) = MSE;
+  setting.fwrite(file_name);
 }
 void MY_CNN :: write_result(const char *file_name)
 {
-    MY_DATA result;
-    
-    int data_set = origin.get_column();
-    int data_dimension = origin.get_row();
+  MY_DATA result;
 
-    result.init(data_set,data_dimension + 1);
+  int data_set = origin.get_column();
+  int data_dimension = origin.get_row();
 
-    for(int i = 0 ; i < data_set ; i++)
+  result.init(data_set,data_dimension + 1);
+
+  for(int i = 0 ; i < data_set ; i++)
+  {
+    for(int j = 0 ; j < data_dimension ;j++)
     {
-        for(int j = 0 ; j < data_dimension ;j++)
-        {
-            result(i,j) = origin(i,j);
-        }
-        result(i,data_dimension) = origin_maching(i,0);
+      result(i,j) = origin(i,j);
     }
-    
+    result(i,data_dimension) = origin_maching(i,0);
+  }
+
   //  origin.print();
 
   //  result.print();
-    result.fwrite(file_name);
+  result.fwrite(file_name);
 }
 
 double MY_CNN :: get_percent()
@@ -135,376 +135,593 @@ double MY_CNN :: get_percent()
 
 void MY_CNN :: learning()
 {
-    if(read_status == 0)
+  if(read_status == 0)
+  {
+    cout<<"there is no input data"<<endl;
+    exit(1);
+  }
+  learning_status = 1;
+  origin.suffle();
+
+  MY_DATA centroid,small;
+
+  int data_dimension = origin.get_row();
+  int data_set = origin.get_column();
+
+  int pibonachi = 1;
+
+  centroid.init(1,data_dimension);
+  small.init(1,data_dimension);
+
+  small.random(-0.01,0.01);
+
+
+
+  //----------------- calculate centroid ----------------
+  for(int i = 0 ;i < data_set ; i++)
+  {
+    for(int j = 0 ; j < data_dimension ; j++)
     {
-        cout<<"there is no input data"<<endl;
-        exit(1);
+      centroid(0,j) = centroid(0,j) + origin(i,j);
     }
-    learning_status = 1;
+  }
 
-    MY_DATA centroid,small;
+  for(int j = 0; j < data_dimension ; j++)
+  {
+    centroid(0,j) = centroid(0,j)/data_set;
+  }
+  //----------------------------------------------------
 
-    int data_dimension = origin.get_row();
-    int data_set = origin.get_column();
+  //    centroid.print();
+  //    small.print();
 
-    centroid.init(1,data_dimension);
-    small.init(1,data_dimension);
+  MY_DATA cluster_data;
 
-    small.random(-0.01,0.01);
+  weight.init(cluster,data_dimension);
+  cluster_data.init(cluster,2); //클러스터에 포함된 데이터 수, 에러^2의 합들
 
 
+  centroid_k = 2;
 
-    //----------------- calculate centroid ----------------
-    for(int i = 0 ;i < data_set ; i++)
+  for(int i = 0 ; i < data_dimension ; i++)
+  {
+    weight(0,i) = centroid(0,i) + small(0,i);
+    weight(1,i) = centroid(0,i) - small(0,i);
+  }
+
+  epoch = 0;
+  double temp = 0.0;
+  double min = 0.0;
+  int winner = 0;
+  int loser = 0;
+  while(1)
+  {
+    do
     {
-        for(int j = 0 ; j < data_dimension ; j++)
+      loser = 0;
+      for(int i = 0 ; i < data_set ; i++)
+      {
+        for(int j = 0 ; j < centroid_k ; j++)
         {
-            centroid(0,j) = centroid(0,j) + origin(i,j);
+          temp = 0.0;
+          for(int k = 0 ; k < data_dimension ; k++)
+          {
+            temp = temp + (origin(i,k)-weight(j,k))*(origin(i,k)-weight(j,k));
+          }
+          if(j == 0)
+          {
+            min = temp;
+            winner = j;
+          }
+          else
+          {
+            if(min > temp)
+            {
+              min = temp;
+              winner = j;
+            }
+          }
         }
-    }
+        if(epoch == 0)
+        {
+          loser++;
+          cluster_data(winner,0) = cluster_data(winner,0) + 1;
+          origin_maching(i,0) = winner;
+          for(int k = 0 ; k < data_dimension ; k++)
+          {
+            weight(winner,k) = weight(winner,k)+(origin(i,k)-weight(winner,k))/cluster_data(winner,0);
+          }    
+        }
+        else
+        {
+          int before =  (int)origin_maching(i,0); 
+          if(winner != before)
+          {
+            loser++;
+            origin_maching(i,0) = winner;
+            cluster_data(winner,0) = cluster_data(winner,0) + 1;
+            cluster_data(before,0) = cluster_data(before,0) - 1;
 
-    for(int j = 0; j < data_dimension ; j++)
+            for(int k = 0 ; k < data_dimension ; k++)
+            { 
+              weight(winner,k) = weight(winner,k)+(origin(i,k)-weight(winner,k))/cluster_data(winner,0);
+              weight(before,k) = weight(before,k)-(origin(i,k)-weight(before,k))/cluster_data(before,0);
+
+            }
+
+          }
+        }
+        //   weight.print(); 만약 실시간 그래프를 하려면 이 타이밍에 출력
+      }
+      epoch++; 
+    }while(loser != 0);
+
+    //-----------------------------------------------------------
+    system("clear"); 
+    cout<<"----------------------"<<endl;
+    cout<<"percent : "<<this->get_percent()*100<<"%"<<endl;
+    cout<<"k : "<<centroid_k<<endl;
+    cout<<"epoch : "<<epoch<<endl;
+    cout<<"----------------------"<<endl;
+    //-----------------------------------------------------------
+
+    for(int i = 0; i < centroid_k ;i++) cluster_data(i,1) = 0.0; 
+    for(int i = 0 ; i < data_set ; i++)
     {
-        centroid(0,j) = centroid(0,j)/data_set;
+      int cluster_num = origin_maching(i,0);
+      for(int j = 0 ; j < data_dimension ; j++)
+      {
+        cluster_data(cluster_num,1) = cluster_data(cluster_num,1) + ((origin(i,j)-weight(cluster_num,j))*((origin(i,j)-weight(cluster_num,j))));
+      }
     }
-    //----------------------------------------------------
+    MSE = 0.0;
+    for(int i = 0 ; i < cluster ;i++)
+    {
+      MSE = MSE + cluster_data(i,1);
+      //  cout<<i<<" : "<<cluster_data(i,1)<<endl;
+    }
+    MSE = MSE/data_set;
+    // centroid_k가 한개 증가하는 시점의 MSE
 
-//    centroid.print();
-//    small.print();
 
-    MY_DATA cluster_data;
-
-    weight.init(cluster,data_dimension);
-    cluster_data.init(cluster,2); //클러스터에 포함된 데이터 수, 에러^2의 합들
+    centroid_k++;
+    if(centroid_k > cluster) break;
 
 
-    centroid_k = 2;
+    double max;
+    int max_number;
 
+
+    for(int i = 0 ; i < centroid_k ; i++)
+    {
+      if(i == 0)
+      {
+        max =  cluster_data(i,1);
+        max_number = i;
+      }
+      else
+      {
+        if(max < cluster_data(i,1))
+        {
+          max = cluster_data(i,1);
+          max_number = i;
+        }
+      }
+    }
     for(int i = 0 ; i < data_dimension ; i++)
     {
-        weight(0,i) = centroid(0,i) + small(0,i);
-        weight(1,i) = centroid(0,i) - small(0,i);
+      weight(centroid_k-1,i) = weight(max_number,i) + small(0,i);
     }
 
-    epoch = 0;
-    double temp = 0.0;
-    double min = 0.0;
-    int winner = 0;
-    int loser = 0;
-    while(1)
+  }
+
+}
+void MY_CNN :: pibonachi_learning()
+{
+  if(read_status == 0)
+  {
+    cout<<"there is no input data"<<endl;
+    exit(1);
+  }
+  learning_status = 1;
+  origin.suffle();
+
+  MY_DATA centroid,small;
+
+  int data_dimension = origin.get_row();
+  int data_set = origin.get_column();
+  int before_centroid_k;
+  int pibonachi = 1;
+
+  centroid.init(1,data_dimension);
+  small.init(1,data_dimension);
+
+  small.random(-0.01,0.01);
+
+
+
+  //----------------- calculate centroid ----------------
+  for(int i = 0 ;i < data_set ; i++)
+  {
+    for(int j = 0 ; j < data_dimension ; j++)
     {
-        do
+      centroid(0,j) = centroid(0,j) + origin(i,j);
+    }
+  }
+
+  for(int j = 0; j < data_dimension ; j++)
+  {
+    centroid(0,j) = centroid(0,j)/data_set;
+  }
+  //----------------------------------------------------
+
+  //    centroid.print();
+  //    small.print();
+
+  MY_DATA cluster_data;
+
+  weight.init(cluster,data_dimension);
+  cluster_data.init(cluster,2); //클러스터에 포함된 데이터 수, 에러^2의 합들
+
+
+  centroid_k = 2;
+
+  for(int i = 0 ; i < data_dimension ; i++)
+  {
+    weight(0,i) = centroid(0,i) + small(0,i);
+    weight(1,i) = centroid(0,i) - small(0,i);
+  }
+  MY_DATA decent;
+  epoch = 0;
+  double temp = 0.0;
+  double min = 0.0;
+  int winner = 0;
+  int loser = 0;
+  while(1)
+  {
+    do
+    {
+      loser = 0;
+      for(int i = 0 ; i < data_set ; i++)
+      {
+        for(int j = 0 ; j < centroid_k ; j++)
         {
-            loser = 0;
-            for(int i = 0 ; i < data_set ; i++)
+          temp = 0.0;
+          for(int k = 0 ; k < data_dimension ; k++)
+          {
+            temp = temp + (origin(i,k)-weight(j,k))*(origin(i,k)-weight(j,k));
+          }
+          if(j == 0)
+          {
+            min = temp;
+            winner = j;
+          }
+          else
+          {
+            if(min > temp)
             {
-                for(int j = 0 ; j < centroid_k ; j++)
-                {
-                    temp = 0.0;
-                    for(int k = 0 ; k < data_dimension ; k++)
-                    {
-                        temp = temp + (origin(i,k)-weight(j,k))*(origin(i,k)-weight(j,k));
-                    }
-                    if(j == 0)
-                    {
-                        min = temp;
-                        winner = j;
-                    }
-                    else
-                    {
-                        if(min > temp)
-                        {
-                            min = temp;
-                            winner = j;
-                        }
-                    }
-                }
-                if(epoch == 0)
-                {
-                    loser++;
-                    cluster_data(winner,0) = cluster_data(winner,0) + 1;
-                    origin_maching(i,0) = winner;
-                    for(int k = 0 ; k < data_dimension ; k++)
-                    {
-                        weight(winner,k) = weight(winner,k)+(origin(i,k)-weight(winner,k))/cluster_data(winner,0);
-                    }    
-                }
-                else
-                {
-                    int before =  (int)origin_maching(i,0); 
-                    if(winner != before)
-                    {
-                        loser++;
-                        origin_maching(i,0) = winner;
-                        cluster_data(winner,0) = cluster_data(winner,0) + 1;
-                        cluster_data(before,0) = cluster_data(before,0) - 1;
-
-                        for(int k = 0 ; k < data_dimension ; k++)
-                        { 
-                            weight(winner,k) = weight(winner,k)+(origin(i,k)-weight(winner,k))/cluster_data(winner,0);
-                            weight(before,k) = weight(before,k)-(origin(i,k)-weight(before,k))/cluster_data(before,0);
-
-                        }
-
-                    }
-                }
-             //   weight.print(); 만약 실시간 그래프를 하려면 이 타이밍에 출력
+              min = temp;
+              winner = j;
             }
-            epoch++; 
-        }while(loser != 0);
-
-        //-----------------------------------------------------------
-        system("clear"); 
-        cout<<"----------------------"<<endl;
-        cout<<"percent : "<<this->get_percent()*100<<"%"<<endl;
-        cout<<"k : "<<centroid_k<<endl;
-        cout<<"epoch : "<<epoch<<endl;
-        cout<<"----------------------"<<endl;
-        //-----------------------------------------------------------
-
-        for(int i = 0; i < centroid_k ;i++) cluster_data(i,1) = 0.0; 
-        for(int i = 0 ; i < data_set ; i++)
+          }
+        }
+        if(epoch == 0)
         {
-            int cluster_num = origin_maching(i,0);
-            for(int j = 0 ; j < data_dimension ; j++)
+          loser++;
+          cluster_data(winner,0) = cluster_data(winner,0) + 1;
+          origin_maching(i,0) = winner;
+          for(int k = 0 ; k < data_dimension ; k++)
+          {
+            weight(winner,k) = weight(winner,k)+(origin(i,k)-weight(winner,k))/cluster_data(winner,0);
+          }    
+        }
+        else
+        {
+          int before =  (int)origin_maching(i,0); 
+          if(winner != before)
+          {
+            loser++;
+            origin_maching(i,0) = winner;
+            cluster_data(winner,0) = cluster_data(winner,0) + 1;
+            cluster_data(before,0) = cluster_data(before,0) - 1;
+
+            for(int k = 0 ; k < data_dimension ; k++)
+            { 
+              weight(winner,k) = weight(winner,k)+(origin(i,k)-weight(winner,k))/cluster_data(winner,0);
+              weight(before,k) = weight(before,k)-(origin(i,k)-weight(before,k))/cluster_data(before,0);
+
+            }
+
+          }
+        }
+        //   weight.print(); 만약 실시간 그래프를 하려면 이 타이밍에 출력
+      }
+      epoch++; 
+    }while(loser != 0);
+
+    //-----------------------------------------------------------
+    system("clear"); 
+    cout<<"----------------------"<<endl;
+    cout<<"percent : "<<this->get_percent()*100<<"%"<<endl;
+    cout<<"k : "<<centroid_k<<endl;
+    cout<<"epoch : "<<epoch<<endl;
+    cout<<"----------------------"<<endl;
+    //-----------------------------------------------------------
+    decent.init(centroid_k);
+    for(int i = 0; i < centroid_k ;i++) cluster_data(i,1) = 0.0; 
+    for(int i = 0 ; i < data_set ; i++)
+    {
+      int cluster_num = origin_maching(i,0);
+      for(int j = 0 ; j < data_dimension ; j++)
+      {
+        cluster_data(cluster_num,1) = cluster_data(cluster_num,1) + ((origin(i,j)-weight(cluster_num,j))*((origin(i,j)-weight(cluster_num,j))));
+      }
+    }
+    for(int i = 0 ; i < centroid_k ; i++) decent.add_decending_sort(cluster_data(i,1),centroid_k);
+    decent.print();
+    int aaa;
+   // cin>>aaa;
+
+
+
+    MSE = 0.0;
+    for(int i = 0 ; i < cluster ;i++)
+    {
+      MSE = MSE + cluster_data(i,1);
+      //  cout<<i<<" : "<<cluster_data(i,1)<<endl;
+    }
+    MSE = MSE/data_set;
+    // centroid_k가 한개 증가하는 시점의 MSE
+
+    before_centroid_k = centroid_k;
+    centroid_k = centroid_k + pibonachi;
+    
+    if(centroid_k > cluster)
+    {
+      if(centroid_k - pibonachi < cluster)
+      {
+
+        pibonachi = cluster - (centroid_k - pibonachi);
+        centroid_k = cluster;
+        for(int i = 0 ; i < pibonachi ; i++)
+        {
+          for(int j = 0 ; j < centroid_k ;j++)
+          {
+            if(decent(i) == cluster_data(j,1))
             {
-                cluster_data(cluster_num,1) = cluster_data(cluster_num,1) + ((origin(i,j)-weight(cluster_num,j))*((origin(i,j)-weight(cluster_num,j))));
+              for(int k = 0 ; k < data_dimension ; k++)
+              {
+                weight(centroid_k - pibonachi +i,k) = weight(j,k) + small(0,k);
+              }
+              break;
             }
-        }
-        MSE = 0.0;
-        for(int i = 0 ; i < cluster ;i++)
-        {
-            MSE = MSE + cluster_data(i,1);
-          //  cout<<i<<" : "<<cluster_data(i,1)<<endl;
-        }
-        MSE = MSE/data_set;
-        // centroid_k가 한개 증가하는 시점의 MSE
-
-        centroid_k++;
-        if(centroid_k > cluster) break;
-        
-        
-        double max;
-        int max_number;
-        
-
-        for(int i = 0 ; i < centroid_k ; i++)
-        {
-            if(i == 0)
-            {
-                max =  cluster_data(i,1);
-                max_number = i;
-            }
-            else
-            {
-                if(max < cluster_data(i,1))
-                {
-                    max = cluster_data(i,1);
-                    max_number = i;
-                }
-            }
-        }
-        for(int i = 0 ; i < data_dimension ; i++)
-        {
-            weight(centroid_k-1,i) = weight(max_number,i) + small(0,i);
+          }
         }
 
+
+        continue;
+      }
+      break;
     }
 
- }
+
+    double max;
+    int max_number;
+
+
+    for(int i = 0 ; i < pibonachi ; i++)
+    {
+      for(int j = 0 ; j < centroid_k - pibonachi ;j++)
+      {
+        if(decent(i) == cluster_data(j,1))
+        {
+          for(int k = 0 ; k < data_dimension ; k++)
+          {
+            weight(centroid_k - pibonachi +i,k) = weight(j,k) + small(0,k);
+          }
+          break;
+        }
+      }
+    }
+    pibonachi = before_centroid_k;
+  }
+
+
+}
+
 
 void MY_CNN :: WCNN_learning()
 {
-   
-    
 
-    mean.print();
-    variance.print();
-    wcnn_weight.print();
-    if(read_status == 0)
+
+
+  mean.print();
+  variance.print();
+  wcnn_weight.print();
+  if(read_status == 0)
+  {
+    cout<<"there is no input data"<<endl;
+    exit(1);
+  }
+  learning_status = 1;
+
+  MY_DATA centroid,small;
+
+  int data_dimension = origin.get_row();
+  int data_set = origin.get_column();
+
+  centroid.init(1,data_dimension);
+  small.init(1,data_dimension);
+
+  small.random(-0.01,0.01);
+
+
+
+  //----------------- calculate centroid ----------------
+  for(int i = 0 ;i < data_set ; i++)
+  {
+    for(int j = 0 ; j < data_dimension ; j++)
     {
-        cout<<"there is no input data"<<endl;
-        exit(1);
+      centroid(0,j) = centroid(0,j) + origin(i,j);
     }
-    learning_status = 1;
+  }
 
-    MY_DATA centroid,small;
+  for(int j = 0; j < data_dimension ; j++)
+  {
+    centroid(0,j) = centroid(0,j)/data_set;
+  }
+  //----------------------------------------------------
 
-    int data_dimension = origin.get_row();
-    int data_set = origin.get_column();
+  //    centroid.print();
+  //    small.print();
 
-    centroid.init(1,data_dimension);
-    small.init(1,data_dimension);
+  MY_DATA cluster_data;
 
-    small.random(-0.01,0.01);
+  weight.init(cluster,data_dimension);
+  cluster_data.init(cluster,2); //클러스터에 포함된 데이터 수, 에러^2의 합들
 
 
+  centroid_k = 2;
 
-    //----------------- calculate centroid ----------------
-    for(int i = 0 ;i < data_set ; i++)
+  for(int i = 0 ; i < data_dimension ; i++)
+  {
+    weight(0,i) = centroid(0,i) + small(0,i);
+    weight(1,i) = centroid(0,i) - small(0,i);
+  }
+
+  epoch = 0;
+  double temp = 0.0;
+  double min = 0.0;
+  int winner = 0;
+  int loser = 0;
+  while(1)
+  {
+    do
     {
-        for(int j = 0 ; j < data_dimension ; j++)
+      loser = 0;
+      for(int i = 0 ; i < data_set ; i++)
+      {
+        for(int j = 0 ; j < centroid_k ; j++)
         {
-            centroid(0,j) = centroid(0,j) + origin(i,j);
+          temp = 0.0;
+          for(int k = 0 ; k < data_dimension ; k++)
+          {
+            temp = temp + (origin(i,k)-weight(j,k))*(origin(i,k)-weight(j,k));
+          }
+          if(j == 0)
+          {
+            min = temp;
+            winner = j;
+          }
+          else
+          {
+            if(min > temp)
+            {
+              min = temp;
+              winner = j;
+            }
+          }
         }
-    }
+        if(epoch == 0)
+        {
+          loser++;
+          double win_temp = 1;
 
-    for(int j = 0; j < data_dimension ; j++)
+          for(int n = 0 ; n < data_dimension ; n++) win_temp= win_temp/wcnn_weight(i,n);
+
+          cluster_data(winner,0) = cluster_data(winner,0) + win_temp;
+          origin_maching(i,0) = winner;
+          for(int k = 0 ; k < data_dimension ; k++)
+          {
+            weight(winner,k) = weight(winner,k)+(origin(i,k)-weight(winner,k))/cluster_data(winner,0)*win_temp;
+          }    
+        }
+        else
+        {
+          int before =  (int)origin_maching(i,0); 
+          if(winner != before)
+          {
+            loser++;
+            double win_temp = 1;
+
+            for(int n = 0 ; n < data_dimension ; n++) win_temp= win_temp/wcnn_weight(i,n);
+
+
+            origin_maching(i,0) = winner;
+            cluster_data(winner,0) = cluster_data(winner,0) + win_temp;
+            cluster_data(before,0) = cluster_data(before,0) - win_temp;
+
+            for(int k = 0 ; k < data_dimension ; k++)
+            { 
+              weight(winner,k) = weight(winner,k)+(origin(i,k)-weight(winner,k))/cluster_data(winner,0)*win_temp;
+              weight(before,k) = weight(before,k)-(origin(i,k)-weight(before,k))/cluster_data(before,0)*win_temp;
+
+            }
+
+          }
+        }
+        //   weight.print(); 만약 실시간 그래프를 하려면 이 타이밍에 출력
+      }
+      epoch++; 
+    }while(loser != 0);
+
+    //-----------------------------------------------------------
+    system("clear"); 
+    cout<<"-------wcnn-----------"<<endl;
+    cout<<"percent : "<<this->get_percent()*100<<"%"<<endl;
+    cout<<"k : "<<centroid_k<<endl;
+    cout<<"epoch : "<<epoch<<endl;
+    cout<<"----------------------"<<endl;
+    //-----------------------------------------------------------
+
+    for(int i = 0; i < centroid_k ;i++) cluster_data(i,1) = 0.0; 
+    for(int i = 0 ; i < data_set ; i++)
     {
-        centroid(0,j) = centroid(0,j)/data_set;
+      int cluster_num = origin_maching(i,0);
+      for(int j = 0 ; j < data_dimension ; j++)
+      {
+        cluster_data(cluster_num,1) = cluster_data(cluster_num,1) + ((origin(i,j)-weight(cluster_num,j))*((origin(i,j)-weight(cluster_num,j))));
+      }
     }
-    //----------------------------------------------------
+    MSE = 0.0;
+    for(int i = 0 ; i < cluster ;i++)
+    {
+      MSE = MSE + cluster_data(i,1);
+      //  cout<<i<<" : "<<cluster_data(i,1)<<endl;
+    }
+    MSE = MSE/data_set;
+    // centroid_k가 한개 증가하는 시점의 MSE
 
-//    centroid.print();
-//    small.print();
-
-    MY_DATA cluster_data;
-
-    weight.init(cluster,data_dimension);
-    cluster_data.init(cluster,2); //클러스터에 포함된 데이터 수, 에러^2의 합들
+    centroid_k++;
+    if(centroid_k > cluster) break;
 
 
-    centroid_k = 2;
+    double max;
+    int max_number;
 
+
+    for(int i = 0 ; i < centroid_k ; i++)
+    {
+      if(i == 0)
+      {
+        max =  cluster_data(i,1);
+        max_number = i;
+      }
+      else
+      {
+        if(max < cluster_data(i,1))
+        {
+          max = cluster_data(i,1);
+          max_number = i;
+        }
+      }
+    }
     for(int i = 0 ; i < data_dimension ; i++)
     {
-        weight(0,i) = centroid(0,i) + small(0,i);
-        weight(1,i) = centroid(0,i) - small(0,i);
+      weight(centroid_k-1,i) = weight(max_number,i) + small(0,i);
     }
 
-    epoch = 0;
-    double temp = 0.0;
-    double min = 0.0;
-    int winner = 0;
-    int loser = 0;
-    while(1)
-    {
-        do
-        {
-            loser = 0;
-            for(int i = 0 ; i < data_set ; i++)
-            {
-                for(int j = 0 ; j < centroid_k ; j++)
-                {
-                    temp = 0.0;
-                    for(int k = 0 ; k < data_dimension ; k++)
-                    {
-                        temp = temp + (origin(i,k)-weight(j,k))*(origin(i,k)-weight(j,k));
-                    }
-                    if(j == 0)
-                    {
-                        min = temp;
-                        winner = j;
-                    }
-                    else
-                    {
-                        if(min > temp)
-                        {
-                            min = temp;
-                            winner = j;
-                        }
-                    }
-                }
-                if(epoch == 0)
-                {
-                    loser++;
-                    double win_temp = 1;
-
-                    for(int n = 0 ; n < data_dimension ; n++) win_temp= win_temp/wcnn_weight(i,n);
-
-                    cluster_data(winner,0) = cluster_data(winner,0) + win_temp;
-                    origin_maching(i,0) = winner;
-                    for(int k = 0 ; k < data_dimension ; k++)
-                    {
-                        weight(winner,k) = weight(winner,k)+(origin(i,k)-weight(winner,k))/cluster_data(winner,0)*win_temp;
-                    }    
-                }
-                else
-                {
-                    int before =  (int)origin_maching(i,0); 
-                    if(winner != before)
-                    {
-                        loser++;
-                     double win_temp = 1;
-
-                    for(int n = 0 ; n < data_dimension ; n++) win_temp= win_temp/wcnn_weight(i,n);
-
-
-                        origin_maching(i,0) = winner;
-                        cluster_data(winner,0) = cluster_data(winner,0) + win_temp;
-                        cluster_data(before,0) = cluster_data(before,0) - win_temp;
-
-                        for(int k = 0 ; k < data_dimension ; k++)
-                        { 
-                            weight(winner,k) = weight(winner,k)+(origin(i,k)-weight(winner,k))/cluster_data(winner,0)*win_temp;
-                            weight(before,k) = weight(before,k)-(origin(i,k)-weight(before,k))/cluster_data(before,0)*win_temp;
-
-                        }
-
-                    }
-                }
-             //   weight.print(); 만약 실시간 그래프를 하려면 이 타이밍에 출력
-            }
-            epoch++; 
-        }while(loser != 0);
-
-        //-----------------------------------------------------------
-        system("clear"); 
-        cout<<"-------wcnn-----------"<<endl;
-        cout<<"percent : "<<this->get_percent()*100<<"%"<<endl;
-        cout<<"k : "<<centroid_k<<endl;
-        cout<<"epoch : "<<epoch<<endl;
-        cout<<"----------------------"<<endl;
-        //-----------------------------------------------------------
-
-        for(int i = 0; i < centroid_k ;i++) cluster_data(i,1) = 0.0; 
-        for(int i = 0 ; i < data_set ; i++)
-        {
-            int cluster_num = origin_maching(i,0);
-            for(int j = 0 ; j < data_dimension ; j++)
-            {
-                cluster_data(cluster_num,1) = cluster_data(cluster_num,1) + ((origin(i,j)-weight(cluster_num,j))*((origin(i,j)-weight(cluster_num,j))));
-            }
-        }
-        MSE = 0.0;
-        for(int i = 0 ; i < cluster ;i++)
-        {
-            MSE = MSE + cluster_data(i,1);
-          //  cout<<i<<" : "<<cluster_data(i,1)<<endl;
-        }
-        MSE = MSE/data_set;
-        // centroid_k가 한개 증가하는 시점의 MSE
-
-        centroid_k++;
-        if(centroid_k > cluster) break;
-        
-        
-        double max;
-        int max_number;
-        
-
-        for(int i = 0 ; i < centroid_k ; i++)
-        {
-            if(i == 0)
-            {
-                max =  cluster_data(i,1);
-                max_number = i;
-            }
-            else
-            {
-                if(max < cluster_data(i,1))
-                {
-                    max = cluster_data(i,1);
-                    max_number = i;
-                }
-            }
-        }
-        for(int i = 0 ; i < data_dimension ; i++)
-        {
-            weight(centroid_k-1,i) = weight(max_number,i) + small(0,i);
-        }
-
-    }
+  }
 
 
 
@@ -512,68 +729,68 @@ void MY_CNN :: WCNN_learning()
 
 void MY_CNN :: testing()
 {
-    if(read_status == 0)
-    {
-        cout<<"no read data"<<endl;
-        exit(1);
-    }
-    int data_dimension = origin.get_row();
-    int data_set = origin.get_column();
-    if(data_dimension != weight.get_row())
-    {
-        cout<<"the dimensions don't match"<<endl;
-        exit(1);
-    }
-    MY_DATA cluster_data;
-    cluster = weight.get_column();
-    cluster_data.init(cluster,2); //클러스터에 포함된 데이터 수, 에러^2의 합들
+  if(read_status == 0)
+  {
+    cout<<"no read data"<<endl;
+    exit(1);
+  }
+  int data_dimension = origin.get_row();
+  int data_set = origin.get_column();
+  if(data_dimension != weight.get_row())
+  {
+    cout<<"the dimensions don't match"<<endl;
+    exit(1);
+  }
+  MY_DATA cluster_data;
+  cluster = weight.get_column();
+  cluster_data.init(cluster,2); //클러스터에 포함된 데이터 수, 에러^2의 합들
 
 
 
-    double temp = 0.0;
-    double min = 0.0;
-    int winner = 0;
-    for(int i = 0 ; i < data_set ; i++)
+  double temp = 0.0;
+  double min = 0.0;
+  int winner = 0;
+  for(int i = 0 ; i < data_set ; i++)
+  {
+    for(int j = 0 ; j < weight.get_column() ; j++)
     {
-        for(int j = 0 ; j < weight.get_column() ; j++)
+      temp = 0.0;
+      for(int k = 0 ; k < data_dimension ; k++)
+      {
+        temp = temp + (origin(i,k)-weight(j,k))*(origin(i,k)-weight(j,k));
+      }
+      if(j == 0)
+      {
+        min = temp;
+        winner = j;
+      }
+      else
+      {
+        if(min > temp)
         {
-            temp = 0.0;
-            for(int k = 0 ; k < data_dimension ; k++)
-            {
-                temp = temp + (origin(i,k)-weight(j,k))*(origin(i,k)-weight(j,k));
-            }
-            if(j == 0)
-            {
-                min = temp;
-                winner = j;
-            }
-            else
-            {
-                if(min > temp)
-                {
-                    min = temp;
-                    winner = j;
-                }
-            }
+          min = temp;
+          winner = j;
         }
-        origin_maching(i,0) = winner;
+      }
     }
-    for(int i = 0; i < weight.get_column() ;i++) cluster_data(i,1) = 0.0; 
-    for(int i = 0 ; i < data_set ; i++)
+    origin_maching(i,0) = winner;
+  }
+  for(int i = 0; i < weight.get_column() ;i++) cluster_data(i,1) = 0.0; 
+  for(int i = 0 ; i < data_set ; i++)
+  {
+    int cluster_num = origin_maching(i,0);
+    for(int j = 0 ; j < data_dimension ; j++)
     {
-        int cluster_num = origin_maching(i,0);
-        for(int j = 0 ; j < data_dimension ; j++)
-        {
-            cluster_data(cluster_num,1) = cluster_data(cluster_num,1) + ((origin(i,j)-weight(cluster_num,j))*((origin(i,j)-weight(cluster_num,j))));
-        }
+      cluster_data(cluster_num,1) = cluster_data(cluster_num,1) + ((origin(i,j)-weight(cluster_num,j))*((origin(i,j)-weight(cluster_num,j))));
     }
-    MSE = 0.0;
-    for(int i = 0 ; i < cluster ;i++)
-    {
-        MSE = MSE + cluster_data(i,1);
-        //  cout<<i<<" : "<<cluster_data(i,1)<<endl;
-    }
-    MSE = MSE/data_set;
+  }
+  MSE = 0.0;
+  for(int i = 0 ; i < cluster ;i++)
+  {
+    MSE = MSE + cluster_data(i,1);
+    //  cout<<i<<" : "<<cluster_data(i,1)<<endl;
+  }
+  MSE = MSE/data_set;
 
 
 
@@ -581,8 +798,6 @@ void MY_CNN :: testing()
 
 
 }
-
-
 MY_CNN :: MY_CNN()
 {
   this->read_status = 0;
