@@ -233,7 +233,7 @@ bool MY_DATA ::fwrite(const char *fname)
     {
       for(int j = 0 ; j < this->row ; j++)
       {
-        fprintf(fp,"%lf ",this->data[i * this->row + j]);
+        fprintf(fp,"%18.15f ",this->data[i * this->row + j]);
       }
       fprintf(fp,"\n");
     }

@@ -104,6 +104,10 @@ void MY_CNN :: write_setting(const char *file_name)
   setting(2,0) = MSE;
   setting.fwrite(file_name);
 }
+void MY_CNN :: write_error(const char *file_name)
+{
+  error.fwrite(file_name);
+}
 void MY_CNN :: write_result(const char *file_name)
 {
   MY_DATA result;
@@ -145,6 +149,9 @@ void MY_CNN :: learning()
 
   MY_DATA centroid,small;
 
+  MY_DATA e;
+  e.init(MAX_EPOCH,2);
+ 
   int data_dimension = origin.get_row();
   int data_set = origin.get_column();
 
@@ -253,6 +260,25 @@ void MY_CNN :: learning()
         }
         //   weight.print(); 만약 실시간 그래프를 하려면 이 타이밍에 출력
       }
+      for(int i = 0; i < centroid_k ;i++) cluster_data(i,1) = 0.0; 
+      for(int i = 0 ; i < data_set ; i++)
+      {
+        int cluster_num = origin_maching(i,0);
+        for(int j = 0 ; j < data_dimension ; j++)
+        {
+          cluster_data(cluster_num,1) = cluster_data(cluster_num,1) + ((origin(i,j)-weight(cluster_num,j))*((origin(i,j)-weight(cluster_num,j))));
+        }
+      }
+      MSE = 0.0;
+      for(int i = 0 ; i < cluster ;i++)
+      {
+        MSE = MSE + cluster_data(i,1);
+        //  cout<<i<<" : "<<cluster_data(i,1)<<endl;
+      }
+      MSE = MSE/data_set;
+      e(epoch,0) = MSE;
+      e(epoch,1) = centroid_k;
+ 
       epoch++; 
     }while(loser != 0);
 
@@ -265,6 +291,7 @@ void MY_CNN :: learning()
     cout<<"----------------------"<<endl;
     //-----------------------------------------------------------
 
+/*
     for(int i = 0; i < centroid_k ;i++) cluster_data(i,1) = 0.0; 
     for(int i = 0 ; i < data_set ; i++)
     {
@@ -282,7 +309,7 @@ void MY_CNN :: learning()
     }
     MSE = MSE/data_set;
     // centroid_k가 한개 증가하는 시점의 MSE
-
+*/
 
     centroid_k++;
     if(centroid_k > cluster) break;
@@ -308,13 +335,20 @@ void MY_CNN :: learning()
         }
       }
     }
+    small.random(-0.01,0.01);
+
     for(int i = 0 ; i < data_dimension ; i++)
     {
       weight(centroid_k-1,i) = weight(max_number,i) + small(0,i);
     }
 
   }
-
+  error.init(epoch,2);
+  for(int i = 0 ; i < epoch ; i++)
+  {
+    error(i,0) = e(i,0);
+    error(i,1) = e(i,1);
+  }
 }
 void MY_CNN :: pibonachi_learning()
 {
@@ -326,6 +360,8 @@ void MY_CNN :: pibonachi_learning()
   learning_status = 1;
   origin.suffle();
 
+  MY_DATA e;
+  e.init(MAX_EPOCH,2);
   MY_DATA centroid,small;
 
   int data_dimension = origin.get_row();
@@ -382,6 +418,7 @@ void MY_CNN :: pibonachi_learning()
     do
     {
       loser = 0;
+
       for(int i = 0 ; i < data_set ; i++)
       {
         for(int j = 0 ; j < centroid_k ; j++)
@@ -436,6 +473,24 @@ void MY_CNN :: pibonachi_learning()
         }
         //   weight.print(); 만약 실시간 그래프를 하려면 이 타이밍에 출력
       }
+      for(int i = 0; i < centroid_k ;i++) cluster_data(i,1) = 0.0; 
+      for(int i = 0 ; i < data_set ; i++)
+      {
+        int cluster_num = origin_maching(i,0);
+        for(int j = 0 ; j < data_dimension ; j++)
+        {
+          cluster_data(cluster_num,1) = cluster_data(cluster_num,1) + ((origin(i,j)-weight(cluster_num,j))*((origin(i,j)-weight(cluster_num,j))));
+        }
+      }
+
+      MSE = 0.0;
+      for(int i = 0 ; i < cluster ;i++)
+      {
+        MSE = MSE + cluster_data(i,1);
+      }
+      MSE = MSE/data_set;
+      e(epoch,0) = MSE;
+      e(epoch,1) = centroid_k;
       epoch++; 
     }while(loser != 0);
 
@@ -445,33 +500,13 @@ void MY_CNN :: pibonachi_learning()
     cout<<"percent : "<<this->get_percent()*100<<"%"<<endl;
     cout<<"k : "<<centroid_k<<endl;
     cout<<"epoch : "<<epoch<<endl;
+    cout<<"MSE : "<<MSE<<endl;
     cout<<"----------------------"<<endl;
     //-----------------------------------------------------------
     decent.init(centroid_k);
-    for(int i = 0; i < centroid_k ;i++) cluster_data(i,1) = 0.0; 
-    for(int i = 0 ; i < data_set ; i++)
-    {
-      int cluster_num = origin_maching(i,0);
-      for(int j = 0 ; j < data_dimension ; j++)
-      {
-        cluster_data(cluster_num,1) = cluster_data(cluster_num,1) + ((origin(i,j)-weight(cluster_num,j))*((origin(i,j)-weight(cluster_num,j))));
-      }
-    }
+        
     for(int i = 0 ; i < centroid_k ; i++) decent.add_decending_sort(cluster_data(i,1),centroid_k);
     decent.print();
-    int aaa;
-   // cin>>aaa;
-
-
-
-    MSE = 0.0;
-    for(int i = 0 ; i < cluster ;i++)
-    {
-      MSE = MSE + cluster_data(i,1);
-      //  cout<<i<<" : "<<cluster_data(i,1)<<endl;
-    }
-    MSE = MSE/data_set;
-    // centroid_k가 한개 증가하는 시점의 MSE
 
     before_centroid_k = centroid_k;
     centroid_k = centroid_k + pibonachi;
@@ -525,7 +560,12 @@ void MY_CNN :: pibonachi_learning()
     }
     pibonachi = before_centroid_k;
   }
-
+  error.init(epoch,2);
+  for(int i = 0 ; i < epoch ; i++)
+  {
+    error(i,0) = e(i,0);
+    error(i,1) = e(i,1);
+  }
 
 }
 

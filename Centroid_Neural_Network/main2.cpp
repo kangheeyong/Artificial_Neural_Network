@@ -24,6 +24,7 @@ int main(int argc, char **argv)
   a.write_weight(argv[3]);
   a.write_result("result.txt");
   a.write_setting("setting.txt");
+  a.write_error("p_error.txt");
 
   return 0;
 }
