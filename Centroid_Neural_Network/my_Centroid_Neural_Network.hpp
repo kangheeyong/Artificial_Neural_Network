@@ -32,7 +32,11 @@ void write_setting(const char *file_name);
 void write_result(const char *file_name);
 void learning();
 void WCNN_learning();
+void DCNN_learning();
+void DCNN_pibonachi_learning();
 void pibonachi_learning();
+void pibonachi2_learning();
+void temp_learning();
 void testing();
 double get_percent();
 

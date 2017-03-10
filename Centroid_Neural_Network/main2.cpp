@@ -19,12 +19,12 @@ int main(int argc, char **argv)
 
   a.init(atoi(argv[1]));
   a.read_input(argv[2]);
-  a.pibonachi_learning();
+  a.DCNN_pibonachi_learning();
   a.status();
   a.write_weight(argv[3]);
-  a.write_result("result.txt");
-  a.write_setting("setting.txt");
-  a.write_error("p_error.txt");
+  a.write_result("d_result.txt");
+  a.write_setting("d_setting.txt");
+  a.write_error("d_error.txt");
 
   return 0;
 }
