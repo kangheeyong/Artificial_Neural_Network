@@ -22,9 +22,9 @@ int main(int argc, char **argv)
   a.DCNN_pibonachi_learning();
   a.status();
   a.write_weight(argv[3]);
-  a.write_result("d_result.txt");
-  a.write_setting("d_setting.txt");
-  a.write_error("d_error.txt");
+  a.write_result("p_result.txt");
+  a.write_setting("p_setting.txt");
+  a.write_error("p_error.txt");
 
   return 0;
 }

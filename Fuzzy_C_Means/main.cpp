@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 
   a.read_setting(argv[1]);
   a.read_input(argv[2]);
-  a.GBFCM_learning();
+  a.GBFCM_MK_learning();
   a.status();
   a.write_error("error.txt");
   a.write_weight(argv[3]);

@@ -12,6 +12,7 @@ private :
   int cluster;
   double min_error;
   double gain;
+  double standard_deviation;
   int input_dimension, input_set;
   int m;
 
@@ -23,10 +24,11 @@ public :
   void read_input(const char *file_name);
   void read_setting(const char *file_name);
   void write_weight(const char *file_name);
+  void write_center(const char *file_name);
   void write_error(const char *file_name);
   void learning();
   void GBFCM_learning();
-
+  void GBFCM_MK_learning();
 };
 
 

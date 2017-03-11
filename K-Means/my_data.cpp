@@ -132,6 +132,33 @@ void MY_DATA ::timer(int now, int total)
 
   start_point = end_point;
 }
+void MY_DATA :: add_decending_sort(double num,int size)
+{
+  int temp;
+  int i;
+  for(i = 0 ; i < size ; i++)
+  {
+    if(data[i] <= num )
+    {
+      for(int j = size-1 ; j > i ; j--)
+      {
+        data[j] = data[j-1];
+      }
+      data[i] = num;
+      break;
+
+    }
+  }
+
+}
+void MY_DATA :: add_acending_sort(double num, int size)
+{
+
+
+
+
+}
+
 const int MY_DATA ::get_row()
 {
   return this->row;

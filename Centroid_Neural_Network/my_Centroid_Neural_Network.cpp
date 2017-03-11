@@ -391,7 +391,7 @@ void MY_CNN :: DCNN_learning()
   int data_dimension = origin.get_row();
   int data_set = origin.get_column();
 
-  //if(data_dimension % 2 == 1)
+  if(data_dimension % 2 == 1)
   if(data_dimension != 4)
   {
     cout<<"no 2-dimensions GPFD"<<endl;
@@ -406,30 +406,20 @@ void MY_CNN :: DCNN_learning()
 
 
   //----------------- calculate centroid ----------------
+
   for(int i = 0 ;i < data_set ; i++)
   {
     for(int j = 0 ; j < data_dimension ; j++)
     {
       centroid(0,j) = centroid(0,j) + origin(i,j);
+      variance(j) = variance(j) + origin(i,data_dimension+j);
     }
   }
 
   for(int j = 0; j < data_dimension ; j++)
   {
     centroid(0,j) = centroid(0,j)/data_set;
-  }
-
-  for(int i = 0 ; i < data_set ; i++)
-  {
-    for(int j = 0 ; j < data_dimension ; j++)
-    {
-      variance(j) = variance(j) + (centroid(0,j) - origin(i,j))*(centroid(0,j) - origin(i,j));
-    }
-  }
-
-  for(int i = 0 ; i < data_dimension ; i++)
-  {
-    variance(i) = variance(i)/data_set;
+    variance(j) = variance(j)/data_set;
   }
 
 
@@ -437,7 +427,7 @@ void MY_CNN :: DCNN_learning()
 
 
   MY_DATA cluster_data;
-
+   MY_DATA temp_weight;
   weight.init(cluster,data_dimension*2);
   cluster_data.init(cluster,2); //클러스터에 포함된 데이터 수, 에러^2의 합들
 
@@ -519,8 +509,8 @@ void MY_CNN :: DCNN_learning()
       }
       
 
-      MY_DATA temp_weight;
-      temp_weight.init(cluster, 2*data_dimension);
+   
+      temp_weight.init(centroid_k, 2*data_dimension);
       /*end point epoch*/
 
       for(int i = 0; i < centroid_k ;i++) cluster_data(i,1) = 0.0; 
@@ -655,25 +645,14 @@ void MY_CNN :: DCNN_pibonachi_learning()
     for(int j = 0 ; j < data_dimension ; j++)
     {
       centroid(0,j) = centroid(0,j) + origin(i,j);
+      variance(j) = variance(j) + origin(i,data_dimension+j);
     }
   }
 
   for(int j = 0; j < data_dimension ; j++)
   {
     centroid(0,j) = centroid(0,j)/data_set;
-  }
-
-  for(int i = 0 ; i < data_set ; i++)
-  {
-    for(int j = 0 ; j < data_dimension ; j++)
-    {
-      variance(j) = variance(j) + (centroid(0,j) - origin(i,j))*(centroid(0,j) - origin(i,j));
-    }
-  }
-
-  for(int i = 0 ; i < data_dimension ; i++)
-  {
-    variance(i) = variance(i)/data_set;
+    variance(j) = variance(j)/data_set;
   }
 
 

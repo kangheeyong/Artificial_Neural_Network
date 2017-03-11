@@ -1,6 +1,6 @@
 #ifndef __MY_CENTROID_NEURAL_NETWORK_CPP__
 #define __MY_CENTROID_NEURAL_NETWORK_CPP__
-#define MAX_EPOCH       5000
+#define MAX_EPOCH       500000
 
 
 #include "my_data.hpp"

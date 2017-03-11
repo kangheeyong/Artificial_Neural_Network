@@ -9,8 +9,8 @@ timer 함수 한줄만 남은 시간보이게 함
 #define __MY_DATA_CPP__
 
 #define PRINT_PER_EPOCH   50
-#define  BUFF_SIZE   1024
-
+#define BUFF_SIZE         1024
+#define MAX_SIZE          5000
 #include <time.h>
 
 class MY_DATA{
@@ -33,6 +33,8 @@ public:
   void suffle(); //data의 row단위로 섞는다.
   void suffle(int num); //data의 row단위로 섞는다.
   void timer(int now, int total); //data의 row단위로 섞는다.
+  void add_decending_sort(double num, int size);
+  void add_acending_sort(double num, int size);
   const int get_row();
   const int get_column();
   bool fread(const char *fname); //텍스트 읽기
